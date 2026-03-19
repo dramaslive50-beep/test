@@ -569,7 +569,7 @@ body {
 
     <div class="divider"></div>
     <div class="section-pad">
-      <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;font-size:10px">Contact Us</div>
+      <div style="font-size:10px;color:var(--text-muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px">Support</div>
       <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:16px;display:flex;justify-content:space-between;align-items:center">
         <div>
           <div style="font-size:14px;font-weight:600">Admin Support</div>
@@ -682,16 +682,16 @@ body {
 // ═══════════════════════════════════════════════════════
 // TELEGRAM MINI APP INIT
 // ═══════════════════════════════════════════════════════
-const tg = window.Telegram?.WebApp || {};
-if (tg.ready) tg.ready();
-if (tg.expand) tg.expand();
-if (tg.setHeaderColor) tg.setHeaderColor('#0B0E0C');
-if (tg.setBackgroundColor) tg.setBackgroundColor('#0B0E0C');
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
+tg.setHeaderColor('#0B0E0C');
+tg.setBackgroundColor('#0B0E0C');
 
-// Get user info from Telegram (works inside Telegram AND browser)
+// Get user info from Telegram
 const tgUser = tg.initDataUnsafe?.user || {};
-const userId = tgUser.id || ('guest_' + Math.random().toString(36).substr(2, 8));
-const firstName = tgUser.first_name || 'Investor';
+const userId = tgUser.id || 'demo_user';
+const firstName = tgUser.first_name || 'Guest';
 const username = tgUser.username || '';
 
 // ═══════════════════════════════════════════════════════
@@ -793,20 +793,18 @@ window.addEventListener('load', async () => {
   // Profile
   document.getElementById('profileName').textContent = firstName + (username ? '' : '');
   document.getElementById('profileUsername').textContent = username ? '@' + username : 'Telegram User';
-  document.getElementById('profileAvatar').textContent = (firstName && firstName.length > 0) ? firstName[0].toUpperCase() : 'I';
+  document.getElementById('profileAvatar').textContent = firstName[0]?.toUpperCase() || '?';
   const joined = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
   document.getElementById('profileJoined').textContent = joined;
 
   renderAll();
 
-  // Hide loading after 1.4s — works in browser and Telegram both
+  // Hide loading after 1.4s
   setTimeout(() => {
-    const loadEl = document.getElementById('loading');
-    const appEl = document.getElementById('app');
-    if (loadEl) loadEl.style.opacity = '0';
+    document.getElementById('loading').style.opacity = '0';
     setTimeout(() => {
-      if (loadEl) loadEl.style.display = 'none';
-      if (appEl) appEl.style.display = 'flex';
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
     }, 500);
   }, 1400);
 });
@@ -1070,7 +1068,7 @@ function confirmInvest() {
   renderAll();
 
   document.getElementById('propModal').classList.remove('open');
-  showToast('✅ Investment successful! ' + amt.toFixed(2) + ' TON invested.');
+  showToast('✅ Investment confirmed! ' + amt.toFixed(2) + ' TON invested.');
 
   // Send data to bot/backend
   sendToBot({ action: 'invest', userId, propId: p.id, amount: amt, unlockAt: unlock.toISOString() });
@@ -1130,12 +1128,12 @@ async function checkDeposit() {
     renderAll();
 
     if (credited > 0) {
-      showToast('✅ ' + credited.toFixed(4) + ' TON credited!');
+      showToast('✅ ' + credited.toFixed(4) + ' TON credited to your balance!');
     } else {
-      showToast('⏳ Koi naya deposit nahi mila');
+      showToast('⏳ No new deposit found. Make sure memo is correct.');
     }
   } catch(e) {
-    showToast('❌ Check failed. Dobara try karein.');
+    showToast('❌ Check failed. Please try again.');
   }
 
   btn.textContent = '🔄 Check My Deposit';
@@ -1143,25 +1141,23 @@ async function checkDeposit() {
 }
 
 // ═══════════════════════════════════════════════════════
-// WITHDRAW PAGE (shown in modal / inline)
+// WITHDRAW PAGE
 // ═══════════════════════════════════════════════════════
 function showWithdrawPage() {
-  // Show as overlay on profile page
   if (state.balance < CONFIG.minWithdraw) {
-    showToast('❌ Min withdrawal: ' + CONFIG.minWithdraw + ' TON');
+    showToast('❌ Minimum withdrawal: ' + CONFIG.minWithdraw + ' TON');
     showPage('profile');
     return;
   }
 
-  // Simple prompt using Telegram's native UI feel
-  const wallet = prompt('Apna TON wallet address likhein (EQ... ya UQ...)');
+  const wallet = prompt('Enter your TON wallet address (EQ... or UQ...)');
   if (!wallet) return;
   if (!wallet.startsWith('EQ') && !wallet.startsWith('UQ') || wallet.length < 40) {
     showToast('❌ Invalid TON wallet address');
     return;
   }
 
-  const amtStr = prompt('Kitna nikalna chahte hain? (Max: ' + state.balance.toFixed(2) + ' TON)');
+  const amtStr = prompt('How much would you like to withdraw? (Max: ' + state.balance.toFixed(2) + ' TON)');
   const amt = parseFloat(amtStr);
   if (!amt || amt < CONFIG.minWithdraw || amt > state.balance) {
     showToast('❌ Invalid amount'); return;
@@ -1171,7 +1167,7 @@ function showWithdrawPage() {
   saveState();
   renderAll();
   sendToBot({ action: 'withdraw', userId, amount: amt, wallet });
-  showToast('✅ Withdrawal request bhej di! 24 hrs mein process hogi.');
+  showToast('✅ Withdrawal request submitted! Processing within 24 hours.');
   showPage('profile');
 }
 
@@ -1182,7 +1178,7 @@ async function sendToBot(data) {
   try {
     if (tg && tg.sendData) tg.sendData(JSON.stringify(data));
   } catch(e) {
-    if (CONFIG.apiBase && CONFIG.apiBase !== 'YOUR_BACKEND_URL') {
+    if (CONFIG.apiBase && CONFIG.apiBase !== '') {
       fetch(CONFIG.apiBase + '/webhook', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
