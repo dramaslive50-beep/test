@@ -488,7 +488,7 @@ body {
     <div class="inv-list" id="invList"></div>
   </div>
 
-  <!-- ══ DEPOSIT PAGE ══ -->
+    <!-- ══ DEPOSIT PAGE ══ -->
   <div class="page" id="page-deposit">
     <div class="page-header">
       <div class="page-title">Deposit Funds</div>
@@ -496,19 +496,19 @@ body {
     </div>
     <div class="deposit-section">
 
-      <!-- Currency Tabs -->
+      <!-- Tabs -->
       <div style="display:flex;gap:10px;margin-bottom:18px">
         <button id="tab-ton" onclick="switchDepositTab('ton')"
-          style="flex:1;padding:11px;border-radius:10px;border:1px solid var(--gold);background:rgba(201,168,76,0.2);color:var(--gold);font-size:14px;font-weight:700;cursor:pointer">
+          style="flex:1;padding:12px;border-radius:10px;border:1px solid var(--gold);background:rgba(201,168,76,0.18);color:var(--gold);font-size:14px;font-weight:700;cursor:pointer;transition:.2s">
           💎 TON
         </button>
         <button id="tab-usdt" onclick="switchDepositTab('usdt')"
-          style="flex:1;padding:11px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:var(--text-muted);font-size:14px;font-weight:700;cursor:pointer">
+          style="flex:1;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:var(--text-muted);font-size:14px;font-weight:700;cursor:pointer;transition:.2s">
           💵 USDT
         </button>
       </div>
 
-      <!-- ── TON PANEL ── -->
+      <!-- TON PANEL -->
       <div id="deposit-ton-panel">
         <div class="wallet-box">
           <div class="wallet-label">Send TON to this address</div>
@@ -517,7 +517,7 @@ body {
         </div>
         <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:14px;padding:16px;margin-bottom:20px">
           <div style="font-size:12px;color:var(--gold);font-weight:700;margin-bottom:6px">⚠️ REQUIRED — MEMO / COMMENT</div>
-          <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px">Include this exactly in the transaction memo:</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px">You must include this in the transaction memo:</div>
           <div style="font-family:monospace;font-size:18px;color:var(--gold);font-weight:700;padding:10px;background:rgba(0,0,0,0.3);border-radius:8px;display:flex;justify-content:space-between;align-items:center">
             <span id="memoId">Loading...</span>
             <button onclick="copyMemo()" style="background:none;border:none;color:var(--gold-dim);cursor:pointer;font-size:12px">Copy</button>
@@ -525,69 +525,60 @@ body {
         </div>
         <div class="steps-list" style="margin-bottom:20px">
           <div class="step-item"><div class="step-num">1</div><div class="step-text">Open <strong>Tonkeeper</strong> or <strong>MyTonWallet</strong></div></div>
-          <div class="step-item"><div class="step-num">2</div><div class="step-text">Copy the TON address above</div></div>
+          <div class="step-item"><div class="step-num">2</div><div class="step-text">Copy the wallet address above</div></div>
           <div class="step-item"><div class="step-num">3</div><div class="step-text">Enter amount (min <strong>0.5 TON</strong>)</div></div>
-          <div class="step-item"><div class="step-num">4</div><div class="step-text">In <strong>Memo / Comment</strong> field paste your username shown above</div></div>
-          <div class="step-item"><div class="step-num">5</div><div class="step-text">Send, then click Check below</div></div>
+          <div class="step-item"><div class="step-num">4</div><div class="step-text">Paste your <strong>username / memo</strong> in the Comment field</div></div>
+          <div class="step-item"><div class="step-num">5</div><div class="step-text">Send and tap <strong>Check below</strong></div></div>
         </div>
         <button class="check-deposit-btn" onclick="checkTonDeposit()" id="checkDepBtn">🔄 Check My TON Deposit</button>
       </div>
 
-      <!-- ── USDT PANEL (Paykassa) ── -->
+      <!-- USDT PANEL (Paykassa) -->
       <div id="deposit-usdt-panel" style="display:none">
-
-        <!-- Status messages -->
-        <div id="usdt-loading" style="text-align:center;padding:30px 0;display:none">
-          <div style="font-size:32px;margin-bottom:12px">⏳</div>
+        <div id="usdt-loading" style="text-align:center;padding:40px 0;display:none">
+          <div style="font-size:36px;margin-bottom:12px">⏳</div>
           <div style="font-size:14px;color:var(--text-muted)">Generating your unique USDT address...</div>
         </div>
-        <div id="usdt-error" style="display:none;background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:14px;padding:16px;margin-bottom:16px;font-size:13px;color:#e74c3c"></div>
-
-        <!-- Address display -->
+        <div id="usdt-error" style="display:none;background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:12px;padding:14px;margin-bottom:14px;font-size:13px;color:#e74c3c;line-height:1.6"></div>
         <div id="usdt-address-box" style="display:none">
-          <div style="background:rgba(46,204,113,0.06);border:1px solid rgba(46,204,113,0.2);border-radius:14px;padding:16px;margin-bottom:16px">
-            <div style="font-size:11px;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Your Unique USDT Address</div>
+          <div style="background:rgba(46,204,113,0.06);border:1px solid rgba(46,204,113,0.2);border-radius:14px;padding:16px;margin-bottom:14px">
+            <div style="font-size:11px;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Your Unique USDT Address</div>
             <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Network: <strong style="color:var(--text)" id="usdt-network">TRC-20</strong></div>
-            <div style="font-family:monospace;font-size:12px;color:var(--text);word-break:break-all;background:rgba(0,0,0,0.3);border-radius:8px;padding:12px;margin:10px 0" id="usdt-addr-display">—</div>
-            <button class="copy-btn" style="background:rgba(46,204,113,0.1);border-color:rgba(46,204,113,0.3);color:var(--green)" onclick="copyUsdtAddr()">📋 Copy USDT Address</button>
+            <div id="usdt-addr-display" style="font-family:monospace;font-size:12px;word-break:break-all;background:rgba(0,0,0,0.3);border-radius:8px;padding:12px;margin:10px 0;color:var(--text)">—</div>
+            <button class="copy-btn" style="background:rgba(46,204,113,0.1);border-color:rgba(46,204,113,0.25);color:var(--green)" onclick="copyUsdtAddr()">📋 Copy USDT Address</button>
           </div>
-          <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;line-height:1.9">
+          <div style="background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.12);border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;line-height:1.9;color:var(--text-muted)">
             <strong style="color:var(--gold)">ℹ️ Important:</strong><br>
-            • Send <strong>USDT only</strong> to this address<br>
-            • Min deposit: <strong>$10 USDT</strong><br>
-            • This address is unique to you — no memo needed<br>
+            • Send <strong style="color:var(--text)">USDT only</strong> to this address<br>
+            • Minimum: <strong style="color:var(--text)">$10 USDT</strong><br>
+            • No memo needed — address is unique to you<br>
             • Credited automatically after 1 confirmation
           </div>
           <div style="display:flex;gap:10px">
             <button class="check-deposit-btn" style="flex:1" onclick="checkUsdtDeposit()" id="checkUsdtBtn">🔄 Check USDT Deposit</button>
-            <button onclick="generateUsdtAddress()" style="padding:15px 14px;border-radius:14px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:var(--text-muted);cursor:pointer;font-size:12px;white-space:nowrap">New Address</button>
+            <button onclick="resetUsdtAddress()" style="padding:15px 12px;border-radius:14px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.04);color:var(--text-muted);cursor:pointer;font-size:12px">New</button>
           </div>
         </div>
-
-        <!-- Initial generate button -->
         <div id="usdt-generate-box">
-          <div style="text-align:center;padding:20px 0 24px">
-            <div style="font-size:48px;margin-bottom:14px">💵</div>
+          <div style="text-align:center;padding:16px 0 24px">
+            <div style="font-size:48px;margin-bottom:12px">💵</div>
             <div style="font-size:17px;font-weight:600;margin-bottom:8px">Deposit USDT</div>
-            <div style="font-size:13px;color:var(--text-muted);margin-bottom:24px;line-height:1.6">
-              Get a unique USDT address generated<br>just for you. No memo required.
-            </div>
-            <button onclick="generateUsdtAddress()"
-              style="padding:15px 32px;background:linear-gradient(135deg,#1a5e38,var(--green));border:none;border-radius:14px;color:var(--dark);font-size:15px;font-weight:700;cursor:pointer;width:100%">
+            <div style="font-size:13px;color:var(--text-muted);margin-bottom:24px;line-height:1.6">Get a unique deposit address.<br>No memo required — fully automatic.</div>
+            <button onclick="generateUsdtAddress()" class="invest-btn" style="border-radius:14px">
               Generate My USDT Address
             </button>
           </div>
           <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px">
-            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Supported Networks</div>
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Supported Networks</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <span style="padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.06);font-size:12px;color:var(--text)">TRC-20 (Tron)</span>
-              <span style="padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.06);font-size:12px;color:var(--text)">ERC-20 (Ethereum)</span>
-              <span style="padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.06);font-size:12px;color:var(--text)">BEP-20 (BSC)</span>
+              <span style="padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.06);font-size:12px">TRC-20 (Tron)</span>
+              <span style="padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.06);font-size:12px">ERC-20 (Ethereum)</span>
+              <span style="padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.06);font-size:12px">BEP-20 (BSC)</span>
             </div>
           </div>
         </div>
-
       </div>
+
     </div>
   </div>
 
@@ -734,37 +725,36 @@ body {
 // ═══════════════════════════════════════════════════════
 // TELEGRAM MINI APP INIT
 // ═══════════════════════════════════════════════════════
-const tg = window.Telegram?.WebApp || {};
-if (tg.ready) tg.ready();
-if (tg.expand) tg.expand();
-if (tg.setHeaderColor) tg.setHeaderColor('#0B0E0C');
-if (tg.setBackgroundColor) tg.setBackgroundColor('#0B0E0C');
+// Safe Telegram init — works in browser AND Telegram
+const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : {};
+try { if(tg.ready) tg.ready(); } catch(e){}
+try { if(tg.expand) tg.expand(); } catch(e){}
+try { if(tg.setHeaderColor) tg.setHeaderColor('#0B0E0C'); } catch(e){}
+try { if(tg.setBackgroundColor) tg.setBackgroundColor('#0B0E0C'); } catch(e){}
 
-// Get user info — works inside Telegram AND browser
-const tgUser   = tg.initDataUnsafe?.user || {};
-const userId   = tgUser.id        || ('guest_' + Math.random().toString(36).substr(2,8));
-const firstName= tgUser.first_name || 'Investor';
-const username = tgUser.username   || '';
-const memoValue= username ? '@' + username : String(userId);
+// Get user info from Telegram
+const tgUser = tg.initDataUnsafe?.user || {};
+const userId = tgUser.id || ('u' + Math.random().toString(36).substr(2,8));
+const firstName = tgUser.first_name || 'Investor';
+const username = tgUser.username || '';
+const memoValue = username ? '@' + username : String(userId);
 
 // ═══════════════════════════════════════════════════════
 // CONFIG — Change these values
 // ═══════════════════════════════════════════════════════
 const CONFIG = {
-  botToken:      '8570024205:AAHaxWcH7VkuD85HkEeb9wmnscO2QLr-S0c',
-  apiBase:       '',
-  tonWallet:     'UQCpoXXua-YKFtgeLv4ERD6PjGa52g0UFAjpcKSBTcz2J8N4',
-  tonApiKey:     'bb7e11d06d5005c4e87532e786e7cf88ff47da5fcaa26941031ae4714bfa64f6',
-  // ── Paykassa USDT (get key at paykassa.pro) ──
-  paykassaKey:   'YOUR_PAYKASSA_API_KEY',   // paykassa.pro → API settings
-  paykassaShopId:'YOUR_SHOP_ID',            // paykassa.pro → Shop ID
-  // ─────────────────────────────────────────────
-  minDeposit:    0.5,
-  minWithdraw:   1.0,
-  minUsdtDeposit:10,
-  tonPriceUSD:   3.0,
-  companyName:   'Al-Noor Real Estate',
-  contactInfo:   '@PrecisionForexAdmin',
+  botToken:       '8570024205:AAHaxWcH7VkuD85HkEeb9wmnscO2QLr-S0c',
+  apiBase:        '',
+  tonWallet:      'UQCpoXXua-YKFtgeLv4ERD6PjGa52g0UFAjpcKSBTcz2J8N4',
+  tonApiKey:      'bb7e11d06d5005c4e87532e786e7cf88ff47da5fcaa26941031ae4714bfa64f6',
+  paykassaKey:    'zfwyzhND0vbMgCqMghz2Umo7BzUXMrhN',    // paykassa.pro → API Settings
+  paykassaShopId: '29771',             // paykassa.pro → My Shops
+  minDeposit:     0.5,
+  minWithdraw:    1.0,
+  minUsdtDeposit: 10,
+  tonPriceUSD:    3.0,
+  companyName:    'Al-Noor Real Estate',
+  contactInfo:    '@PrecisionForexAdmin',
 };
 
 // ═══════════════════════════════════════════════════════
@@ -798,46 +788,40 @@ function saveState() {
 // ═══════════════════════════════════════════════════════
 const SAMPLE_PROPERTIES = [
   {
-    id: 'p1', type: 'home', title: '3BR Family Home — Austin, TX',
-    location: 'Austin, Texas',
-    description: 'Newly renovated 3-bedroom, 2-bath single-family home in a fast-growing Austin neighborhood. Open floor plan, modern kitchen, 2-car garage. Strong rental demand with average 95%+ occupancy.',
-    minInv: 30, returnPct: 12, returnDays: 365, lockDays: 14,
-    slotsTotal: 50, slotsFilled: 23, status: 'active'
+    id:'p1', type:'home', title:'3BR Family Home — Austin, TX',
+    location:'Austin, Texas',
+    description:'Newly renovated 3-bed 2-bath home in fast-growing Austin. Open floor plan, modern kitchen, 2-car garage. 95%+ rental occupancy in this area.',
+    minInv:30, returnPct:12, returnDays:365, lockDays:14, slotsTotal:50, slotsFilled:23, status:'active'
   },
   {
-    id: 'p2', type: 'shop', title: 'Retail Strip Unit — Miami, FL',
-    location: 'Miami, Florida',
-    description: 'High-traffic corner retail unit in Miami Beach. Currently leased to a national coffee chain with a net lease structure and built-in 3% annual rent escalations.',
-    minInv: 50, returnPct: 15, returnDays: 365, lockDays: 14,
-    slotsTotal: 30, slotsFilled: 18, status: 'active'
+    id:'p2', type:'shop', title:'Retail Strip Unit — Miami, FL',
+    location:'Miami, Florida',
+    description:'High-traffic corner retail unit in Miami Beach. Leased to a national coffee chain with 3% annual rent escalations built into the net lease.',
+    minInv:50, returnPct:15, returnDays:365, lockDays:14, slotsTotal:30, slotsFilled:18, status:'active'
   },
   {
-    id: 'p3', type: 'plot', title: 'Residential Land — Nashville, TN',
-    location: 'Nashville, Tennessee',
-    description: 'Shovel-ready 0.5-acre residential lot in Nashville's fastest-growing suburb. Zoned for single-family construction, all utilities at boundary. High builder demand.',
-    minInv: 75, returnPct: 20, returnDays: 730, lockDays: 30,
-    slotsTotal: 20, slotsFilled: 7, status: 'active'
+    id:'p3', type:'plot', title:'Residential Land — Nashville, TN',
+    location:'Nashville, Tennessee',
+    description:'Shovel-ready 0.5-acre lot in Nashville's fastest-growing suburb. Zoned for single-family construction, all utilities at boundary.',
+    minInv:75, returnPct:20, returnDays:730, lockDays:30, slotsTotal:20, slotsFilled:7, status:'active'
   },
   {
-    id: 'p4', type: 'market', title: 'Mixed-Use Plaza — Dallas, TX',
-    location: 'Dallas, Texas',
-    description: '12-unit mixed-use plaza with ground-floor retail and upper-floor office suites on a major corridor with 40,000+ daily vehicle count. Current occupancy: 90%.',
-    minInv: 100, returnPct: 18, returnDays: 365, lockDays: 14,
-    slotsTotal: 40, slotsFilled: 31, status: 'active'
+    id:'p4', type:'market', title:'Mixed-Use Plaza — Dallas, TX',
+    location:'Dallas, Texas',
+    description:'12-unit plaza with ground-floor retail and upper office suites on a 40,000+ daily vehicle corridor. Current occupancy 90%.',
+    minInv:100, returnPct:18, returnDays:365, lockDays:14, slotsTotal:40, slotsFilled:31, status:'active'
   },
   {
-    id: 'p5', type: 'home', title: '4BR Luxury Home — Phoenix, AZ',
-    location: 'Phoenix, Arizona',
-    description: 'Spacious 4-bed, 3-bath home in a gated community. Private pool, mountain views, smart-home features. Short-term rental approved — top performer on Airbnb.',
-    minInv: 30, returnPct: 10, returnDays: 365, lockDays: 14,
-    slotsTotal: 60, slotsFilled: 12, status: 'active'
+    id:'p5', type:'home', title:'4BR Luxury Home — Phoenix, AZ',
+    location:'Phoenix, Arizona',
+    description:'4-bed 3-bath home in a gated community with private pool and mountain views. Short-term rental approved — top Airbnb performer.',
+    minInv:30, returnPct:10, returnDays:365, lockDays:14, slotsTotal:60, slotsFilled:12, status:'active'
   },
   {
-    id: 'p6', type: 'plot', title: 'Commercial Land — Charlotte, NC',
-    location: 'Charlotte, North Carolina',
-    description: '2-acre commercially zoned land parcel adjacent to a new I-485 interchange. Exceptional visibility. Ideal for retail pad, quick service restaurant, or storage facility.',
-    minInv: 80, returnPct: 25, returnDays: 730, lockDays: 60,
-    slotsTotal: 15, slotsFilled: 4, status: 'active'
+    id:'p6', type:'plot', title:'Commercial Land — Charlotte, NC',
+    location:'Charlotte, North Carolina',
+    description:'2-acre commercially zoned parcel next to a new I-485 interchange. Ideal for retail pad, QSR, or storage. Exceptional visibility.',
+    minInv:80, returnPct:25, returnDays:730, lockDays:60, slotsTotal:15, slotsFilled:4, status:'active'
   }
 ];
 
@@ -850,29 +834,30 @@ window.addEventListener('load', async () => {
 
   // Update UI with user info
   document.getElementById('heroName').textContent = firstName;
-  document.getElementById('memoId').textContent = memoValue;
+  document.getElementById('memoId').textContent = (typeof memoValue !== 'undefined') ? memoValue : String(userId);
   document.getElementById('depositWallet').textContent = CONFIG.tonWallet;
   document.getElementById('contactInfo').textContent = CONFIG.contactInfo;
 
   // Profile
   document.getElementById('profileName').textContent = firstName + (username ? '' : '');
   document.getElementById('profileUsername').textContent = username ? '@' + username : 'Telegram User';
-  document.getElementById('profileAvatar').textContent = (firstName && firstName.length > 0) ? firstName[0].toUpperCase() : 'I';
+  document.getElementById('profileAvatar').textContent = (firstName && firstName.length) ? firstName[0].toUpperCase() : 'I';
   const joined = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
   document.getElementById('profileJoined').textContent = joined;
 
   renderAll();
 
-  // Hide loading — works in browser and Telegram
-  setTimeout(() => {
-    const loadEl = document.getElementById('loading');
-    const appEl  = document.getElementById('app');
-    if (loadEl) loadEl.style.opacity = '0';
-    setTimeout(() => {
-      if (loadEl) loadEl.style.display = 'none';
-      if (appEl)  appEl.style.display  = 'flex';
-    }, 500);
-  }, 1400);
+  // Hide loading — guaranteed, works everywhere
+  function hideLoading() {
+    try {
+      var lo = document.getElementById('loading');
+      var ap = document.getElementById('app');
+      if(lo) { lo.style.opacity = '0'; lo.style.transition = 'opacity 0.4s'; }
+      if(ap) { ap.style.display = 'flex'; }
+      setTimeout(function(){ if(lo) lo.style.display = 'none'; }, 450);
+    } catch(err) {}
+  }
+  setTimeout(hideLoading, 1200);
 });
 
 function renderAll() {
@@ -1110,7 +1095,7 @@ function confirmInvest() {
   const amt = parseFloat(document.getElementById('investAmtInput').value);
 
   if (!amt || amt < p.minInv) {
-    showToast('❌ Minimum investment: $' + p.minInv); return;
+    showToast('❌ Minimum investment: ' + p.minInv + ' TON'); return;
   }
   if (amt > state.balance) {
     showToast('❌ Not enough balance. Please deposit first!'); return;
@@ -1145,145 +1130,117 @@ function cancelInvest() {
   document.getElementById('propInfoView').style.display = 'block';
 }
 
-// ═══════════════════════════════════════════════════════
-// DEPOSIT — TON + USDT (Paykassa)
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// DEPOSIT — TON + USDT AUTO (Paykassa)
+// ══════════════════════════════════════════════════════
+
 function copyWallet() {
-  navigator.clipboard.writeText(CONFIG.tonWallet).then(() => showToast('✅ TON address copied!'));
+  navigator.clipboard.writeText(CONFIG.tonWallet).then(function(){ showToast('✅ TON address copied!'); });
 }
 function copyMemo() {
-  navigator.clipboard.writeText(memoValue).then(() => showToast('✅ Memo copied!'));
+  var m = (typeof memoValue !== 'undefined') ? memoValue : String(userId);
+  navigator.clipboard.writeText(m).then(function(){ showToast('✅ Memo copied!'); });
 }
 function copyUsdtAddr() {
-  const addr = document.getElementById('usdt-addr-display').textContent;
-  navigator.clipboard.writeText(addr).then(() => showToast('✅ USDT address copied!'));
+  var a = document.getElementById('usdt-addr-display').textContent;
+  navigator.clipboard.writeText(a).then(function(){ showToast('✅ USDT address copied!'); });
 }
 
-// ── Tab switcher ─────────────────────────────────────────────────
+// Tab switcher
 function switchDepositTab(tab) {
-  const tonPanel  = document.getElementById('deposit-ton-panel');
-  const usdtPanel = document.getElementById('deposit-usdt-panel');
-  const tonBtn    = document.getElementById('tab-ton');
-  const usdtBtn   = document.getElementById('tab-usdt');
+  var tp = document.getElementById('deposit-ton-panel');
+  var up = document.getElementById('deposit-usdt-panel');
+  var tb = document.getElementById('tab-ton');
+  var ub = document.getElementById('tab-usdt');
   if (tab === 'ton') {
-    tonPanel.style.display  = 'block';
-    usdtPanel.style.display = 'none';
-    tonBtn.style.cssText  = 'flex:1;padding:11px;border-radius:10px;border:1px solid var(--gold);background:rgba(201,168,76,0.2);color:var(--gold);font-size:14px;font-weight:700;cursor:pointer';
-    usdtBtn.style.cssText = 'flex:1;padding:11px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:var(--text-muted);font-size:14px;font-weight:700;cursor:pointer';
+    tp.style.display = 'block'; up.style.display = 'none';
+    tb.style.background = 'rgba(201,168,76,0.18)'; tb.style.borderColor = 'var(--gold)'; tb.style.color = 'var(--gold)';
+    ub.style.background = 'rgba(255,255,255,0.04)'; ub.style.borderColor = 'rgba(255,255,255,0.1)'; ub.style.color = 'var(--text-muted)';
   } else {
-    tonPanel.style.display  = 'none';
-    usdtPanel.style.display = 'block';
-    usdtBtn.style.cssText = 'flex:1;padding:11px;border-radius:10px;border:1px solid var(--green);background:rgba(46,204,113,0.15);color:var(--green);font-size:14px;font-weight:700;cursor:pointer';
-    tonBtn.style.cssText  = 'flex:1;padding:11px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:var(--text-muted);font-size:14px;font-weight:700;cursor:pointer';
+    tp.style.display = 'none'; up.style.display = 'block';
+    ub.style.background = 'rgba(46,204,113,0.15)'; ub.style.borderColor = 'var(--green)'; ub.style.color = 'var(--green)';
+    tb.style.background = 'rgba(255,255,255,0.04)'; tb.style.borderColor = 'rgba(255,255,255,0.1)'; tb.style.color = 'var(--text-muted)';
   }
 }
 
-// ── TON deposit check (TonCenter) ────────────────────────────────
+// ── TON deposit check ─────────────────────────────────
 async function checkTonDeposit() {
-  const btn = document.getElementById('checkDepBtn');
-  btn.textContent = '⏳ Checking...';
-  btn.disabled = true;
+  var btn = document.getElementById('checkDepBtn');
+  btn.textContent = '⏳ Checking...'; btn.disabled = true;
   try {
-    const url = `https://toncenter.com/api/v2/getTransactions?address=${CONFIG.tonWallet}&limit=20`;
-    const res  = await fetch(url, { headers: { 'X-API-Key': CONFIG.tonApiKey } });
-    const data = await res.json();
+    var memo = (typeof memoValue !== 'undefined') ? memoValue : String(userId);
+    var url = 'https://toncenter.com/api/v2/getTransactions?address=' + CONFIG.tonWallet + '&limit=20';
+    var res  = await fetch(url, { headers: { 'X-API-Key': CONFIG.tonApiKey } });
+    var data = await res.json();
     if (!data.ok) throw new Error('API error');
-    let credited = 0;
-    for (const tx of data.result) {
+    var credited = 0;
+    for (var i = 0; i < data.result.length; i++) {
+      var tx = data.result[i];
       if (!tx.in_msg || !tx.in_msg.source) continue;
-      const txId    = tx.transaction_id.hash;
-      if (state.checkedTxs.includes(txId)) continue;
-      const comment = (tx.in_msg.message || '').trim();
-      if (comment !== memoValue && comment !== String(userId)) continue;
-      const amountTon = parseInt(tx.in_msg.value) / 1e9;
-      if (amountTon < CONFIG.minDeposit) continue;
-      state.balance += amountTon;
+      var txId = tx.transaction_id.hash;
+      if (state.checkedTxs.indexOf(txId) !== -1) continue;
+      var comment = (tx.in_msg.message || '').trim();
+      if (comment !== memo && comment !== String(userId)) continue;
+      var amt = parseInt(tx.in_msg.value) / 1e9;
+      if (amt < CONFIG.minDeposit) continue;
+      state.balance += amt;
       state.checkedTxs.push(txId);
-      credited += amountTon;
-      sendToBot({ action: 'deposit_ton', userId, amount: amountTon, txId });
+      credited += amt;
+      sendToBot({ action: 'deposit_ton', userId: userId, amount: amt, txId: txId });
     }
     saveState(); renderAll();
-    showToast(credited > 0
-      ? '✅ ' + credited.toFixed(4) + ' TON added to your balance!'
-      : '⏳ No new deposit found. Make sure memo is correct.');
-  } catch(e) {
-    showToast('❌ Check failed. Please try again.');
-  }
-  btn.textContent = '🔄 Check My TON Deposit';
-  btn.disabled = false;
+    showToast(credited > 0 ? '✅ ' + credited.toFixed(4) + ' TON added to your balance!' : '⏳ No new deposit found. Make sure memo is correct.');
+  } catch(e) { showToast('❌ Check failed. Please try again.'); }
+  btn.textContent = '🔄 Check My TON Deposit'; btn.disabled = false;
 }
 
-// ── USDT / Paykassa ──────────────────────────────────────────────
-// Paykassa API is called via a CORS proxy because browsers block
-// direct API calls. We use allorigins.win (free, open source proxy).
-// In production replace with your own backend endpoint.
+// ── USDT / Paykassa ───────────────────────────────────
+var PROXY = 'https://api.allorigins.win/get?url=';
 
-const PAYKASSA_PROXY = 'https://api.allorigins.win/get?url=';
-
-async function paykassaRequest(method, params = {}) {
-  const body = new URLSearchParams({
-    func:     method,
-    api_key:  CONFIG.paykassaKey,
-    shop_id:  CONFIG.paykassaShopId,
-    ...params
-  });
-  const targetUrl = encodeURIComponent('https://paykassa.app/api/0.1/index.php?' + body.toString());
-  const res  = await fetch(PAYKASSA_PROXY + targetUrl);
-  const wrap = await res.json();
+async function paykassaCall(method, params) {
+  var p = Object.assign({ func: method, api_key: CONFIG.paykassaKey, shop_id: CONFIG.paykassaShopId }, params || {});
+  var qs = Object.keys(p).map(function(k){ return k + '=' + encodeURIComponent(p[k]); }).join('&');
+  var url = PROXY + encodeURIComponent('https://paykassa.app/api/0.1/index.php?' + qs);
+  var res  = await fetch(url);
+  var wrap = await res.json();
   return JSON.parse(wrap.contents);
 }
 
 async function generateUsdtAddress() {
-  // Hide generate box, show loader
   document.getElementById('usdt-generate-box').style.display = 'none';
   document.getElementById('usdt-loading').style.display      = 'block';
   document.getElementById('usdt-error').style.display        = 'none';
 
-  // Check if we already stored an address for this user
-  const stored = localStorage.getItem('usdt_addr_' + userId);
+  var stored = null;
+  try { stored = localStorage.getItem('usdt_addr_' + userId); } catch(e){}
   if (stored) {
-    const obj = JSON.parse(stored);
-    showUsdtAddress(obj.address, obj.network);
-    return;
+    var obj = JSON.parse(stored);
+    showUsdtAddress(obj.address, obj.network); return;
   }
 
   try {
-    // Paykassa: sci_create_order — creates a unique address for USDT deposit
-    const orderId = 'RE_' + userId + '_' + Date.now();
-    const data = await paykassaRequest('sci_create_order', {
-      amount:      CONFIG.minUsdtDeposit,
-      currency:    'USDT',
-      system:      'trc20_usdt',       // TRC-20 network
-      order_id:    orderId,
-      comment:     'Deposit ' + memoValue,
-      phone:       '',
-      email:       '',
-      success_url: '',
-      failed_url:  '',
-      language:    'en'
+    if (CONFIG.paykassaKey === 'YOUR_PAYKASSA_API_KEY') throw new Error('setup');
+    var orderId = 'RE_' + userId + '_' + Date.now();
+    var data = await paykassaCall('sci_create_order', {
+      amount: CONFIG.minUsdtDeposit, currency: 'USDT',
+      system: 'trc20_usdt', order_id: orderId,
+      comment: 'Deposit ' + userId, phone: '', email: '',
+      success_url: '', failed_url: '', language: 'en'
     });
-
     if (data.error) throw new Error(data.message || 'Paykassa error');
-
-    const address = data.data?.wallet || data.data?.address || '';
-    const network = 'TRC-20 (Tron)';
-
-    // Save address + orderId locally
-    localStorage.setItem('usdt_addr_' + userId, JSON.stringify({
-      address, network, orderId, createdAt: Date.now()
-    }));
-
-    showUsdtAddress(address, network);
+    var address = (data.data && (data.data.wallet || data.data.address)) || '';
+    if (!address) throw new Error('No address returned');
+    try { localStorage.setItem('usdt_addr_' + userId, JSON.stringify({ address: address, network: 'TRC-20 (Tron)', orderId: orderId })); } catch(e){}
+    showUsdtAddress(address, 'TRC-20 (Tron)');
   } catch(e) {
-    document.getElementById('usdt-loading').style.display = 'none';
+    document.getElementById('usdt-loading').style.display      = 'none';
     document.getElementById('usdt-generate-box').style.display = 'block';
-    const errEl = document.getElementById('usdt-error');
+    var errEl = document.getElementById('usdt-error');
     errEl.style.display = 'block';
-    // Show setup message if API key not configured
-    if (CONFIG.paykassaKey === 'YOUR_PAYKASSA_API_KEY') {
-      errEl.innerHTML = '⚙️ <strong>Setup Required:</strong> Add your Paykassa API key in CONFIG.paykassaKey.<br><br>Get free API key at <strong>paykassa.pro</strong> → Register → API Settings.';
+    if (e.message === 'setup') {
+      errEl.innerHTML = '⚙️ <strong>Setup Required</strong><br><br>Add your Paykassa API key in CONFIG:<br><code>paykassaKey: "YOUR_KEY"</code><br><br>Get free key at <strong>paykassa.pro</strong> → Register → API Settings.';
     } else {
-      errEl.textContent = '❌ Could not generate address: ' + e.message;
+      errEl.textContent = '❌ ' + e.message;
     }
   }
 }
@@ -1296,53 +1253,42 @@ function showUsdtAddress(address, network) {
   document.getElementById('usdt-network').textContent        = network;
 }
 
+function resetUsdtAddress() {
+  try { localStorage.removeItem('usdt_addr_' + userId); } catch(e){}
+  document.getElementById('usdt-address-box').style.display  = 'none';
+  document.getElementById('usdt-generate-box').style.display = 'block';
+}
+
 async function checkUsdtDeposit() {
-  const btn = document.getElementById('checkUsdtBtn');
-  btn.textContent = '⏳ Checking...';
-  btn.disabled = true;
-
-  const stored = localStorage.getItem('usdt_addr_' + userId);
-  if (!stored) {
-    showToast('❌ Generate an address first.');
-    btn.textContent = '🔄 Check USDT Deposit';
-    btn.disabled = false;
-    return;
-  }
-  const { orderId } = JSON.parse(stored);
-
+  var btn = document.getElementById('checkUsdtBtn');
+  btn.textContent = '⏳ Checking...'; btn.disabled = true;
+  var stored = null;
+  try { stored = localStorage.getItem('usdt_addr_' + userId); } catch(e){}
+  if (!stored) { showToast('❌ Generate an address first.'); btn.textContent = '🔄 Check USDT Deposit'; btn.disabled = false; return; }
+  var obj = JSON.parse(stored);
   try {
-    const data = await paykassaRequest('sci_confirm_order', { order_id: orderId });
-
+    var data = await paykassaCall('sci_confirm_order', { order_id: obj.orderId });
     if (data.error) throw new Error(data.message);
-
-    const status = data.data?.status || '';
-    const amount = parseFloat(data.data?.amount || 0);
-
+    var status = (data.data && data.data.status) || '';
+    var amount = parseFloat((data.data && data.data.amount) || 0);
     if (status === 'success' || status === 'paid') {
-      const txKey = 'usdt_tx_' + orderId;
-      if (!localStorage.getItem(txKey)) {
-        localStorage.setItem(txKey, '1');
-        state.balance += amount;
-        saveState(); renderAll();
-        sendToBot({ action: 'deposit_usdt', userId, amount, orderId });
+      var txKey = 'usdt_tx_' + obj.orderId;
+      var alreadyCredited = false;
+      try { alreadyCredited = !!localStorage.getItem(txKey); } catch(e){}
+      if (!alreadyCredited) {
+        try { localStorage.setItem(txKey, '1'); } catch(e){}
+        state.balance += amount; saveState(); renderAll();
+        sendToBot({ action: 'deposit_usdt', userId: userId, amount: amount, orderId: obj.orderId });
         showToast('✅ $' + amount.toFixed(2) + ' USDT credited to your balance!');
-        // Clear address so a new one can be generated next time
-        localStorage.removeItem('usdt_addr_' + userId);
-        document.getElementById('usdt-address-box').style.display  = 'none';
-        document.getElementById('usdt-generate-box').style.display = 'block';
-      } else {
-        showToast('✅ Already credited. Check your balance.');
-      }
+        resetUsdtAddress();
+      } else { showToast('✅ Already credited. Check your balance.'); }
     } else if (status === 'pending' || status === 'waiting') {
-      showToast('⏳ Payment pending. Please wait for confirmations.');
+      showToast('⏳ Payment pending. Waiting for confirmations...');
     } else {
-      showToast('⏳ No payment detected yet. Please send USDT first.');
+      showToast('⏳ No payment detected yet.');
     }
-  } catch(e) {
-    showToast('❌ Check failed: ' + e.message);
-  }
-  btn.textContent = '🔄 Check USDT Deposit';
-  btn.disabled = false;
+  } catch(e) { showToast('❌ Check failed: ' + e.message); }
+  btn.textContent = '🔄 Check USDT Deposit'; btn.disabled = false;
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1357,14 +1303,14 @@ function showWithdrawPage() {
   }
 
   // Simple prompt using Telegram's native UI feel
-  const wallet = prompt('Enter your TON wallet address (EQ... or UQ...)' );
+  const wallet = prompt('Enter your TON wallet address (EQ... or UQ...)');
   if (!wallet) return;
   if (!wallet.startsWith('EQ') && !wallet.startsWith('UQ') || wallet.length < 40) {
     showToast('❌ Invalid TON wallet address');
     return;
   }
 
-  const amtStr = prompt('How much to withdraw? (Max: ' + state.balance.toFixed(2) + ' TON)');
+  const amtStr = prompt('How much would you like to withdraw? (Max: ' + state.balance.toFixed(2) + ' TON)');
   const amt = parseFloat(amtStr);
   if (!amt || amt < CONFIG.minWithdraw || amt > state.balance) {
     showToast('❌ Invalid amount'); return;
@@ -1374,7 +1320,7 @@ function showWithdrawPage() {
   saveState();
   renderAll();
   sendToBot({ action: 'withdraw', userId, amount: amt, wallet });
-  showToast('✅ Withdrawal request submitted! Processing in 24 hours.');
+  showToast('✅ Withdrawal submitted! Processing within 24 hours.');
   showPage('profile');
 }
 
@@ -1383,13 +1329,15 @@ function showWithdrawPage() {
 // ═══════════════════════════════════════════════════════
 async function sendToBot(data) {
   try {
-    if (tg && tg.sendData) tg.sendData(JSON.stringify(data));
+    // Option 1: Send via Telegram WebApp
+    if(tg && tg.sendData) tg.sendData(JSON.stringify(data));
   } catch(e) {
-    if (CONFIG.apiBase && CONFIG.apiBase !== '') {
+    // Option 2: If backend URL configured, send there
+    if (CONFIG.apiBase && CONFIG.apiBase !== 'YOUR_BACKEND_URL') {
       fetch(CONFIG.apiBase + '/webhook', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ ...data, initData: tg.initData || '' })
+        body: JSON.stringify({ ...data, initData: (tg.initData||"") })
       }).catch(() => {});
     }
   }
