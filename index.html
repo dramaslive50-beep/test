@@ -680,61 +680,24 @@ body {
 
 <script>
 // ═══════════════════════════════════════════════════════
-// TELEGRAM MINI APP INIT + USER DATA FETCH
+// TELEGRAM MINI APP INIT
 // ═══════════════════════════════════════════════════════
+var tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : {};
+try{tg.ready&&tg.ready();}catch(e){}
+try{tg.expand&&tg.expand();}catch(e){}
+try{tg.setHeaderColor&&tg.setHeaderColor('#0B0E0C');}catch(e){}
+try{tg.setBackgroundColor&&tg.setBackgroundColor('#0B0E0C');}catch(e){}
 
-// Step 1: Safe WebApp init
-var tg = {};
-try {
-  if (window.Telegram && window.Telegram.WebApp) {
-    tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
-    tg.setHeaderColor('#0B0E0C');
-    tg.setBackgroundColor('#0B0E0C');
-  }
-} catch(e) { console.log('TG init error:', e); }
-
-// Step 2: Fetch user data — try all methods
+// Fetch user data from Telegram
 var tgUser = {};
-
-// Method 1: initDataUnsafe (standard)
-try {
-  if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-    tgUser = tg.initDataUnsafe.user;
-    console.log('User from initDataUnsafe:', tgUser);
-  }
-} catch(e) {}
-
-// Method 2: parse initData string (backup)
-if (!tgUser.id) {
-  try {
-    var rawData = tg.initData || window.Telegram_WebApp_InitData || '';
-    if (rawData) {
-      var urlParams = new URLSearchParams(rawData);
-      var userParam = urlParams.get('user');
-      if (userParam) {
-        tgUser = JSON.parse(userParam);
-        console.log('User from initData parse:', tgUser);
-      }
-    }
-  } catch(e) { console.log('initData parse error:', e); }
-}
-
-// Step 3: Extract fields
-var userId    = tgUser.id         ? String(tgUser.id) : null;
-var firstName = tgUser.first_name || '';
-var lastName  = tgUser.last_name  || '';
-var username  = tgUser.username   || '';
-var fullName  = (firstName + ' ' + lastName).trim();
-
-// Display name: full name > username > "User"
-var displayName = fullName || username || 'User';
-
-// Memo for deposit: @username > numeric ID > ask user
-var memoValue = username ? '@' + username : (userId || 'Check Profile');
-
-console.log('Final user data:', {userId, displayName, username, memoValue});
+try { if(tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) { tgUser = tg.initDataUnsafe.user; } } catch(e){}
+if(!tgUser.id){ try{ var _raw=tg.initData||''; if(_raw){ var _p=new URLSearchParams(_raw); var _u=_p.get('user'); if(_u) tgUser=JSON.parse(decodeURIComponent(_u)); } }catch(e){} }
+var userId    = tgUser.id          ? String(tgUser.id) : ('tmp'+Date.now());
+var firstName = tgUser.first_name  || '';
+var lastName  = tgUser.last_name   || '';
+var username  = tgUser.username    || '';
+var displayName = (firstName+' '+lastName).trim() || username || 'User';
+var memoValue   = username ? '@'+username : (tgUser.id ? String(tgUser.id) : userId);
 
 // ═══════════════════════════════════════════════════════
 // CONFIG — Change these values
@@ -827,27 +790,25 @@ window.addEventListener('load', async () => {
   state.properties = SAMPLE_PROPERTIES;
 
   // Update UI with user info
-  // Show user data fetched from Telegram
   document.getElementById('heroName').textContent      = displayName;
   document.getElementById('memoId').textContent        = memoValue;
   document.getElementById('depositWallet').textContent = CONFIG.tonWallet;
   document.getElementById('contactInfo').textContent   = CONFIG.contactInfo;
-
   document.getElementById('profileName').textContent     = displayName;
-  document.getElementById('profileUsername').textContent = username ? '@' + username : (userId ? 'ID: ' + userId : 'Open in Telegram');
-  document.getElementById('profileAvatar').textContent   = displayName[0] ? displayName[0].toUpperCase() : '?';
+  document.getElementById('profileUsername').textContent = username ? '@'+username : (tgUser.id ? 'ID: '+tgUser.id : '—');
+  document.getElementById('profileAvatar').textContent   = displayName && displayName[0] ? displayName[0].toUpperCase() : '?';
   const joined = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
   document.getElementById('profileJoined').textContent = joined;
 
   renderAll();
 
-  setTimeout(function() {
-    var lo = document.getElementById('loading');
-    var ap = document.getElementById('app');
-    if (lo) { lo.style.transition = 'opacity 0.4s'; lo.style.opacity = '0'; }
-    if (ap) { ap.style.display = 'flex'; }
-    setTimeout(function() { if (lo) lo.style.display = 'none'; }, 450);
-  }, 1200);
+  setTimeout(function(){
+    var lo=document.getElementById('loading');
+    var ap=document.getElementById('app');
+    if(lo){lo.style.transition='opacity 0.4s';lo.style.opacity='0';}
+    if(ap){ap.style.display='flex';}
+    setTimeout(function(){if(lo)lo.style.display='none';},450);
+  },1200);
 });
 
 function renderAll() {
