@@ -682,21 +682,33 @@ body {
 // ═══════════════════════════════════════════════════════
 // TELEGRAM MINI APP INIT
 // ═══════════════════════════════════════════════════════
-const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : {};
-try{if(tg.ready)tg.ready();}catch(e){}
-try{if(tg.expand)tg.expand();}catch(e){}
-try{if(tg.setHeaderColor)tg.setHeaderColor('#0B0E0C');}catch(e){}
-try{if(tg.setBackgroundColor)tg.setBackgroundColor('#0B0E0C');}catch(e){}
+// ── Step 1: Safe Telegram WebApp init ─────────────────
+const tg = (window.Telegram && window.Telegram.WebApp)
+           ? window.Telegram.WebApp
+           : {};
+try { if (tg.ready)            tg.ready();                    } catch(e) {}
+try { if (tg.expand)           tg.expand();                   } catch(e) {}
+try { if (tg.setHeaderColor)   tg.setHeaderColor('#0B0E0C');  } catch(e) {}
+try { if (tg.setBackgroundColor) tg.setBackgroundColor('#0B0E0C'); } catch(e) {}
 
-// Get user info from Telegram
-const tgUser = tg.initDataUnsafe?.user || {};
-const userId    = tgUser.id         || ('u'+Math.random().toString(36).substr(2,8));
-const firstName = tgUser.first_name || '';
-const lastName  = tgUser.last_name  || '';
-const fullName  = (firstName + ' ' + lastName).trim() || 'Investor';
-const username  = tgUser.username   || '';
-// Memo = @username if available, else Telegram numeric ID
-const memoValue = username ? '@'+username : String(tgUser.id || userId);
+// ── Step 2: Fetch user data from Telegram ──────────────
+// initDataUnsafe.user contains: id, first_name, last_name, username, language_code
+const tgUser    = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : {};
+
+const USER_ID   = tgUser.id         || null;
+const USER_NAME = [tgUser.first_name || '', tgUser.last_name || ''].join(' ').trim() || 'User';
+const USER_UNAME= tgUser.username   || '';
+
+// Memo for TON deposit: prefer @username, fallback to numeric Telegram ID
+const USER_MEMO = USER_UNAME
+                  ? '@' + USER_UNAME
+                  : (USER_ID ? String(USER_ID) : 'no-id');
+
+// Legacy aliases (used elsewhere in code)
+const userId    = USER_ID   || ('tmp_' + Date.now());
+const firstName = USER_NAME;
+const username  = USER_UNAME;
+const memoValue = USER_MEMO;
 
 // ═══════════════════════════════════════════════════════
 // CONFIG — Change these values
@@ -788,33 +800,41 @@ window.addEventListener('load', async () => {
   loadState();
   state.properties = SAMPLE_PROPERTIES;
 
-  // Update UI with user info
-  // Hero greeting — show full name
-  document.getElementById('heroName').textContent = fullName;
+  // ── Step 3: Display fetched user data ─────────────────
 
-  // Deposit memo — show @username or numeric Telegram ID
-  document.getElementById('memoId').textContent = memoValue;
+  // Home page greeting
+  document.getElementById('heroName').textContent = USER_NAME;
 
+  // Deposit memo (@username or numeric ID)
+  document.getElementById('memoId').textContent = USER_MEMO;
+
+  // Wallet address + contact
   document.getElementById('depositWallet').textContent = CONFIG.tonWallet;
-  document.getElementById('contactInfo').textContent = CONFIG.contactInfo;
+  document.getElementById('contactInfo').textContent   = CONFIG.contactInfo;
 
-  // Profile — name + username
-  document.getElementById('profileName').textContent    = fullName;
-  document.getElementById('profileUsername').textContent = username ? '@' + username : 'ID: ' + (tgUser.id || userId);
-  var avatarLetter = fullName.length > 0 ? fullName[0].toUpperCase() : 'I';
-  document.getElementById('profileAvatar').textContent  = avatarLetter;
+  // Profile section
+  document.getElementById('profileName').textContent =
+    USER_NAME;                                         // Full name from Telegram
+
+  document.getElementById('profileUsername').textContent =
+    USER_UNAME ? '@' + USER_UNAME                      // @username if exists
+               : (USER_ID ? 'ID: ' + USER_ID : '—');  // else numeric ID
+
+  document.getElementById('profileAvatar').textContent =
+    USER_NAME.length > 0 ? USER_NAME[0].toUpperCase() : '?';
+
   const joined = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
   document.getElementById('profileJoined').textContent = joined;
 
   renderAll();
 
-  // Hide loading — safe everywhere
-  setTimeout(function(){
+  // ── Step 4: Hide loading screen ───────────────────────
+  setTimeout(function() {
     var lo = document.getElementById('loading');
     var ap = document.getElementById('app');
-    if(lo){ lo.style.transition='opacity 0.4s'; lo.style.opacity='0'; }
-    if(ap){ ap.style.display='flex'; }
-    setTimeout(function(){ if(lo) lo.style.display='none'; }, 450);
+    if (lo) { lo.style.transition = 'opacity 0.4s'; lo.style.opacity = '0'; }
+    if (ap) { ap.style.display = 'flex'; }
+    setTimeout(function() { if (lo) lo.style.display = 'none'; }, 450);
   }, 1200);
 });
 
@@ -1095,7 +1115,7 @@ function copyWallet() {
   navigator.clipboard.writeText(CONFIG.tonWallet).then(() => showToast('✅ Address copied!'));
 }
 function copyMemo() {
-  navigator.clipboard.writeText(memoValue).then(function(){ showToast('✅ Memo copied!'); });
+  navigator.clipboard.writeText(userId.toString()).then(() => showToast('✅ Memo ID copied!'));
 }
 
 async function checkDeposit() {
@@ -1113,7 +1133,7 @@ async function checkDeposit() {
     if (!data.ok) throw new Error('API error');
 
     let credited = 0;
-    const memo = (typeof memoValue !== 'undefined') ? memoValue : String(userId);
+    const userIdStr = userId.toString();
 
     for (const tx of data.result) {
       if (!tx.in_msg || !tx.in_msg.source) continue;
@@ -1121,8 +1141,7 @@ async function checkDeposit() {
       if (state.checkedTxs.includes(txId)) continue;
 
       const comment = (tx.in_msg.message || '').trim();
-      // Match @username OR numeric ID (both work)
-      if (comment !== memo && comment !== String(tgUser.id || userId)) continue;
+      if (comment !== userIdStr) continue;
 
       const amountTon = parseInt(tx.in_msg.value) / 1e9;
       if (amountTon < CONFIG.minDeposit) continue;
@@ -1189,14 +1208,14 @@ function showWithdrawPage() {
 async function sendToBot(data) {
   try {
     // Option 1: Send via Telegram WebApp
-    if(tg && tg.sendData) tg.sendData(JSON.stringify(data));
+    if (tg && tg.sendData) tg.sendData(JSON.stringify(data));
   } catch(e) {
     // Option 2: If backend URL configured, send there
     if (CONFIG.apiBase && CONFIG.apiBase !== 'YOUR_BACKEND_URL') {
       fetch(CONFIG.apiBase + '/webhook', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(Object.assign({},data,{initData:(tg&&tg.initData)||''}))
+        body: JSON.stringify(Object.assign({}, data, { initData: (tg && tg.initData) || '' }))
       }).catch(() => {});
     }
   }
