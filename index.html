@@ -682,16 +682,16 @@ body {
 // ═══════════════════════════════════════════════════════
 // TELEGRAM MINI APP INIT
 // ═══════════════════════════════════════════════════════
-const tg = window.Telegram.WebApp;
-tg.ready();
-tg.expand();
-tg.setHeaderColor('#0B0E0C');
-tg.setBackgroundColor('#0B0E0C');
+const tg = window.Telegram?.WebApp || {};
+if (tg.ready) tg.ready();
+if (tg.expand) tg.expand();
+if (tg.setHeaderColor) tg.setHeaderColor('#0B0E0C');
+if (tg.setBackgroundColor) tg.setBackgroundColor('#0B0E0C');
 
-// Get user info from Telegram
+// Get user info from Telegram (works inside Telegram AND browser)
 const tgUser = tg.initDataUnsafe?.user || {};
-const userId = tgUser.id || 'demo_user';
-const firstName = tgUser.first_name || 'Guest';
+const userId = tgUser.id || ('guest_' + Math.random().toString(36).substr(2, 8));
+const firstName = tgUser.first_name || 'Investor';
 const username = tgUser.username || '';
 
 // ═══════════════════════════════════════════════════════
@@ -793,18 +793,20 @@ window.addEventListener('load', async () => {
   // Profile
   document.getElementById('profileName').textContent = firstName + (username ? '' : '');
   document.getElementById('profileUsername').textContent = username ? '@' + username : 'Telegram User';
-  document.getElementById('profileAvatar').textContent = firstName[0]?.toUpperCase() || '?';
+  document.getElementById('profileAvatar').textContent = (firstName && firstName.length > 0) ? firstName[0].toUpperCase() : 'I';
   const joined = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
   document.getElementById('profileJoined').textContent = joined;
 
   renderAll();
 
-  // Hide loading after 1.4s
+  // Hide loading after 1.4s — works in browser and Telegram both
   setTimeout(() => {
-    document.getElementById('loading').style.opacity = '0';
+    const loadEl = document.getElementById('loading');
+    const appEl = document.getElementById('app');
+    if (loadEl) loadEl.style.opacity = '0';
     setTimeout(() => {
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('app').style.display = 'flex';
+      if (loadEl) loadEl.style.display = 'none';
+      if (appEl) appEl.style.display = 'flex';
     }, 500);
   }, 1400);
 });
@@ -1178,15 +1180,13 @@ function showWithdrawPage() {
 // ═══════════════════════════════════════════════════════
 async function sendToBot(data) {
   try {
-    // Option 1: Send via Telegram WebApp
-    tg.sendData(JSON.stringify(data));
+    if (tg && tg.sendData) tg.sendData(JSON.stringify(data));
   } catch(e) {
-    // Option 2: If backend URL configured, send there
     if (CONFIG.apiBase && CONFIG.apiBase !== 'YOUR_BACKEND_URL') {
       fetch(CONFIG.apiBase + '/webhook', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ ...data, initData: tg.initData })
+        body: JSON.stringify({ ...data, initData: tg.initData || '' })
       }).catch(() => {});
     }
   }
