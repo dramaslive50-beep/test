@@ -682,33 +682,53 @@ body {
 // ═══════════════════════════════════════════════════════
 // TELEGRAM MINI APP INIT
 // ═══════════════════════════════════════════════════════
-// ── Step 1: Safe Telegram WebApp init ─────────────────
+// ─── 1. Init Telegram WebApp safely ──────────────────────────
 const tg = (window.Telegram && window.Telegram.WebApp)
-           ? window.Telegram.WebApp
-           : {};
-try { if (tg.ready)            tg.ready();                    } catch(e) {}
-try { if (tg.expand)           tg.expand();                   } catch(e) {}
-try { if (tg.setHeaderColor)   tg.setHeaderColor('#0B0E0C');  } catch(e) {}
-try { if (tg.setBackgroundColor) tg.setBackgroundColor('#0B0E0C'); } catch(e) {}
+           ? window.Telegram.WebApp : {};
+try { tg.ready && tg.ready(); } catch(e) {}
+try { tg.expand && tg.expand(); } catch(e) {}
+try { tg.setHeaderColor && tg.setHeaderColor('#0B0E0C'); } catch(e) {}
+try { tg.setBackgroundColor && tg.setBackgroundColor('#0B0E0C'); } catch(e) {}
 
-// ── Step 2: Fetch user data from Telegram ──────────────
-// initDataUnsafe.user contains: id, first_name, last_name, username, language_code
-const tgUser    = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : {};
+// ─── 2. Parse user data from Telegram ────────────────────────
+// Method A: initDataUnsafe (works in most cases inside Telegram)
+// Method B: parse initData string manually (fallback)
+function getTelegramUser() {
+  // Try Method A first
+  if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
+    return tg.initDataUnsafe.user;
+  }
+  // Try Method B: parse initData string
+  try {
+    var raw = tg.initData || '';
+    if (raw) {
+      var params = new URLSearchParams(raw);
+      var userStr = params.get('user');
+      if (userStr) {
+        return JSON.parse(decodeURIComponent(userStr));
+      }
+    }
+  } catch(e) {}
+  // No data available (browser/preview mode)
+  return null;
+}
 
-const USER_ID   = tgUser.id         || null;
-const USER_NAME = [tgUser.first_name || '', tgUser.last_name || ''].join(' ').trim() || 'User';
-const USER_UNAME= tgUser.username   || '';
+var tgUser = getTelegramUser();
 
-// Memo for TON deposit: prefer @username, fallback to numeric Telegram ID
-const USER_MEMO = USER_UNAME
-                  ? '@' + USER_UNAME
-                  : (USER_ID ? String(USER_ID) : 'no-id');
+// ─── 3. Set user variables ────────────────────────────────────
+var USER_ID    = tgUser ? tgUser.id                              : null;
+var USER_FNAME = tgUser ? (tgUser.first_name || '')              : '';
+var USER_LNAME = tgUser ? (tgUser.last_name  || '')              : '';
+var USER_UNAME = tgUser ? (tgUser.username   || '')              : '';
+var USER_NAME  = (USER_FNAME + ' ' + USER_LNAME).trim() || USER_UNAME || 'User';
+var USER_MEMO  = USER_UNAME ? '@' + USER_UNAME
+               : (USER_ID   ? String(USER_ID) : '—');
 
-// Legacy aliases (used elsewhere in code)
-const userId    = USER_ID   || ('tmp_' + Date.now());
-const firstName = USER_NAME;
-const username  = USER_UNAME;
-const memoValue = USER_MEMO;
+// Legacy vars used elsewhere
+var userId    = USER_ID    || ('tmp_' + Date.now());
+var firstName = USER_NAME;
+var username  = USER_UNAME;
+var memoValue = USER_MEMO;
 
 // ═══════════════════════════════════════════════════════
 // CONFIG — Change these values
@@ -800,35 +820,37 @@ window.addEventListener('load', async () => {
   loadState();
   state.properties = SAMPLE_PROPERTIES;
 
-  // ── Step 3: Display fetched user data ─────────────────
+  // ─── 4. Display user data in UI ────────────────────────────
 
-  // Home page greeting
-  document.getElementById('heroName').textContent = USER_NAME;
+  // Home page — show real name
+  document.getElementById('heroName').textContent =
+    USER_NAME !== 'User' ? USER_NAME : 'Welcome';
 
-  // Deposit memo (@username or numeric ID)
+  // Deposit memo — @username or numeric ID
   document.getElementById('memoId').textContent = USER_MEMO;
 
-  // Wallet address + contact
   document.getElementById('depositWallet').textContent = CONFIG.tonWallet;
   document.getElementById('contactInfo').textContent   = CONFIG.contactInfo;
 
-  // Profile section
+  // Profile — real name
   document.getElementById('profileName').textContent =
-    USER_NAME;                                         // Full name from Telegram
+    USER_NAME !== 'User' ? USER_NAME : 'Telegram User';
 
+  // Profile — @username or numeric ID
   document.getElementById('profileUsername').textContent =
-    USER_UNAME ? '@' + USER_UNAME                      // @username if exists
-               : (USER_ID ? 'ID: ' + USER_ID : '—');  // else numeric ID
+    USER_UNAME ? '@' + USER_UNAME
+    : (USER_ID ? 'ID: ' + USER_ID : 'Open in Telegram');
 
+  // Avatar — first letter of name
   document.getElementById('profileAvatar').textContent =
-    USER_NAME.length > 0 ? USER_NAME[0].toUpperCase() : '?';
+    USER_NAME && USER_NAME !== 'User' ? USER_NAME[0].toUpperCase() : '?';
 
-  const joined = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
+  var joined = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
   document.getElementById('profileJoined').textContent = joined;
 
   renderAll();
 
-  // ── Step 4: Hide loading screen ───────────────────────
+  // ─── 5. Hide loading screen ──────────────────────────────
   setTimeout(function() {
     var lo = document.getElementById('loading');
     var ap = document.getElementById('app');
@@ -1141,7 +1163,7 @@ async function checkDeposit() {
       if (state.checkedTxs.includes(txId)) continue;
 
       const comment = (tx.in_msg.message || '').trim();
-      if (comment !== userIdStr) continue;
+      if (comment !== USER_MEMO && comment !== String(USER_ID)) continue;
 
       const amountTon = parseInt(tx.in_msg.value) / 1e9;
       if (amountTon < CONFIG.minDeposit) continue;
@@ -1215,7 +1237,7 @@ async function sendToBot(data) {
       fetch(CONFIG.apiBase + '/webhook', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(Object.assign({}, data, { initData: (tg && tg.initData) || '' }))
+        body: JSON.stringify(Object.assign({}, data, {initData: (tg && tg.initData) || ''}))
       }).catch(() => {});
     }
   }
