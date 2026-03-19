@@ -400,7 +400,7 @@ body {
   <!-- ══ HOME PAGE ══ -->
   <div class="page active" id="page-home">
     <div class="hero">
-      <div class="hero-greeting">Welcome back 👋</div>
+      <div class="hero-greeting">Assalam o Alaikum 👋</div>
       <div class="hero-name" id="heroName">Guest</div>
       <div class="hero-balance-card">
         <div class="balance-label">Available Balance</div>
@@ -488,38 +488,58 @@ body {
     <div class="inv-list" id="invList"></div>
   </div>
 
-    <!-- ══ DEPOSIT PAGE ══ -->
+  <!-- ══ DEPOSIT PAGE ══ -->
   <div class="page" id="page-deposit">
     <div class="page-header">
-      <div class="page-title">Deposit Funds</div>
-      <div class="page-subtitle">Add balance to start investing</div>
+      <div class="page-title">Deposit TON</div>
+      <div class="page-subtitle">Add funds to invest</div>
     </div>
     <div class="deposit-section">
       <div class="wallet-box">
         <div class="wallet-label">Send TON to this address</div>
         <div class="wallet-address" id="depositWallet">Loading...</div>
-        <button class="copy-btn" onclick="copyWallet()">📋 Copy TON Address</button>
+        <button class="copy-btn" onclick="copyWallet()">📋 Copy Address</button>
       </div>
+
       <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:14px;padding:16px;margin-bottom:20px">
-        <div style="font-size:12px;color:var(--gold);font-weight:700;margin-bottom:6px">⚠️ REQUIRED — MEMO / COMMENT</div>
-        <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px">Include this in the transaction memo/comment:</div>
-        <div style="font-family:monospace;font-size:18px;color:var(--gold);font-weight:700;padding:10px;background:rgba(0,0,0,0.3);border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:12px;color:var(--gold);font-weight:700;margin-bottom:6px">⚠️ ZARURI — MEMO/COMMENT</div>
+        <div style="font-size:13px;color:var(--text-muted)">Transaction mein yeh Memo likhna zaruri hai:</div>
+        <div style="font-family:monospace;font-size:18px;color:var(--gold);font-weight:700;margin-top:8px;padding:10px;background:rgba(0,0,0,0.3);border-radius:8px;display:flex;justify-content:space-between;align-items:center">
           <span id="memoId">Loading...</span>
           <button onclick="copyMemo()" style="background:none;border:none;color:var(--gold-dim);cursor:pointer;font-size:12px">Copy</button>
         </div>
       </div>
+
       <div class="steps-list" style="margin-bottom:20px">
-        <div class="step-item"><div class="step-num">1</div><div class="step-text">Open <strong>Tonkeeper</strong> or <strong>MyTonWallet</strong></div></div>
-        <div class="step-item"><div class="step-num">2</div><div class="step-text">Copy the TON address above</div></div>
-        <div class="step-item"><div class="step-num">3</div><div class="step-text">Enter amount (min <strong>0.5 TON</strong>)</div></div>
-        <div class="step-item"><div class="step-num">4</div><div class="step-text">Paste your <strong>username</strong> shown above into the Comment/Memo field</div></div>
-        <div class="step-item"><div class="step-num">5</div><div class="step-text">Send and tap <strong>Check below</strong></div></div>
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-text">Apni <strong>Tonkeeper / MyTonWallet</strong> app kholein</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-text">Upar wala <strong>wallet address</strong> copy karein</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-text">Amount likhein (<strong>min 0.5 TON</strong>)</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-text">Comment/Memo mein apna <strong>ID</strong> likhein (upar diya hai)</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <div class="step-text">Send karein aur neeche <strong>Check karein</strong></div>
+        </div>
       </div>
-      <button class="check-deposit-btn" onclick="checkTonDeposit()" id="checkDepBtn">🔄 Check My Deposit</button>
+
+      <button class="check-deposit-btn" onclick="checkDeposit()" id="checkDepBtn">
+        🔄 Check My Deposit
+      </button>
     </div>
   </div>
 
-  <!-- ══ PROFILE PAGE ══ -->  <!-- ══ PROFILE PAGE ══ -->
+  <!-- ══ PROFILE PAGE ══ -->
   <div class="page" id="page-profile">
     <div class="profile-hero">
       <div class="profile-avatar" id="profileAvatar">?</div>
@@ -670,10 +690,13 @@ try{if(tg.setBackgroundColor)tg.setBackgroundColor('#0B0E0C');}catch(e){}
 
 // Get user info from Telegram
 const tgUser = tg.initDataUnsafe?.user || {};
-const userId = tgUser.id || ('u'+Math.random().toString(36).substr(2,8));
-const firstName = tgUser.first_name || 'Investor';
-const username = tgUser.username || '';
-const memoValue = username ? '@'+username : String(userId);
+const userId    = tgUser.id         || ('u'+Math.random().toString(36).substr(2,8));
+const firstName = tgUser.first_name || '';
+const lastName  = tgUser.last_name  || '';
+const fullName  = (firstName + ' ' + lastName).trim() || 'Investor';
+const username  = tgUser.username   || '';
+// Memo = @username if available, else Telegram numeric ID
+const memoValue = username ? '@'+username : String(tgUser.id || userId);
 
 // ═══════════════════════════════════════════════════════
 // CONFIG — Change these values
@@ -720,30 +743,42 @@ function saveState() {
 // SAMPLE PROPERTIES — Admin backend se aayengi production mein
 // ═══════════════════════════════════════════════════════
 const SAMPLE_PROPERTIES = [
-  { id:'p1', type:'home',   title:'3BR Family Home — Austin, TX',
-    location:'Austin, Texas',
-    description:'Newly renovated 3-bed 2-bath home in a fast-growing Austin neighborhood. Modern kitchen, 2-car garage, 95%+ rental occupancy.',
-    minInv:30,  returnPct:12, returnDays:365, lockDays:14, slotsTotal:50, slotsFilled:23, status:'active' },
-  { id:'p2', type:'shop',   title:'Retail Strip Unit — Miami, FL',
-    location:'Miami, Florida',
-    description:'High-traffic corner retail in Miami Beach. Leased to a national coffee chain with 3% annual rent escalations built into the net lease.',
-    minInv:50,  returnPct:15, returnDays:365, lockDays:14, slotsTotal:30, slotsFilled:18, status:'active' },
-  { id:'p3', type:'plot',   title:'Residential Land — Nashville, TN',
-    location:'Nashville, Tennessee',
-    description:"Shovel-ready 0.5-acre lot in Nashville's fastest-growing suburb. Zoned for single-family construction, all utilities at the boundary.",
-    minInv:75,  returnPct:20, returnDays:730, lockDays:30, slotsTotal:20, slotsFilled:7,  status:'active' },
-  { id:'p4', type:'market', title:'Mixed-Use Plaza — Dallas, TX',
-    location:'Dallas, Texas',
-    description:'12-unit plaza with ground-floor retail and upper office suites on a 40,000+ daily vehicle corridor. Current occupancy 90%.',
-    minInv:100, returnPct:18, returnDays:365, lockDays:14, slotsTotal:40, slotsFilled:31, status:'active' },
-  { id:'p5', type:'home',   title:'4BR Luxury Home — Phoenix, AZ',
-    location:'Phoenix, Arizona',
-    description:'4-bed 3-bath gated community home with private pool and mountain views. Short-term rental approved — top Airbnb performer.',
-    minInv:30,  returnPct:10, returnDays:365, lockDays:14, slotsTotal:60, slotsFilled:12, status:'active' },
-  { id:'p6', type:'plot',   title:'Commercial Land — Charlotte, NC',
-    location:'Charlotte, North Carolina',
-    description:'2-acre commercially zoned parcel next to a new I-485 interchange. Ideal for retail, QSR, or storage. Exceptional visibility.',
-    minInv:80,  returnPct:25, returnDays:730, lockDays:60, slotsTotal:15, slotsFilled:4,  status:'active' }
+  {
+    id: 'p1', type: 'home', title: '5 Marla House DHA Phase 6',
+    location: 'DHA Lahore', description: 'Fully constructed 5 marla house in prime location. Ground + 1 floor, 3 bedrooms, modern kitchen. High rental yield area with expected 15% annual appreciation.',
+    minInv: 2, returnPct: 12, returnDays: 365, lockDays: 14,
+    slotsTotal: 50, slotsFilled: 23, status: 'active'
+  },
+  {
+    id: 'p2', type: 'shop', title: 'Commercial Shop Gulberg III',
+    location: 'Gulberg Lahore', description: 'Ground floor commercial shop in busy commercial area. Currently rented with steady monthly income. Excellent foot traffic and visibility.',
+    minInv: 3, returnPct: 15, returnDays: 365, lockDays: 14,
+    slotsTotal: 30, slotsFilled: 18, status: 'active'
+  },
+  {
+    id: 'p3', type: 'plot', title: '10 Marla Plot — Bahria Town',
+    location: 'Bahria Town Islamabad', description: 'Ideally located 10 marla plot in Bahria Town Phase 8. Possession available, CDA approved. Rapidly appreciating area with all civic amenities.',
+    minInv: 5, returnPct: 20, returnDays: 730, lockDays: 30,
+    slotsTotal: 20, slotsFilled: 7, status: 'active'
+  },
+  {
+    id: 'p4', type: 'market', title: 'Plaza Shops — Faisal Town',
+    location: 'Faisal Town Lahore', description: '3-storey commercial plaza with 12 shops. Ground floor rented, upper floors under development. High ROI area with growing commercial activity.',
+    minInv: 10, returnPct: 18, returnDays: 365, lockDays: 14,
+    slotsTotal: 40, slotsFilled: 31, status: 'active'
+  },
+  {
+    id: 'p5', type: 'home', title: '10 Marla House Wapda Town',
+    location: 'Wapda Town Lahore', description: 'Spacious 10 marla house in peaceful Wapda Town. Corner plot, 4 bedrooms, servant quarters. Gated community with 24/7 security.',
+    minInv: 4, returnPct: 10, returnDays: 365, lockDays: 14,
+    slotsTotal: 60, slotsFilled: 12, status: 'active'
+  },
+  {
+    id: 'p6', type: 'plot', title: '1 Kanal Farmhouse Land',
+    location: 'Bedian Road Lahore', description: 'Agricultural + residential farmhouse plot on Bedian Road. Easy access, near ring road, rapidly developing area with high appreciation potential.',
+    minInv: 8, returnPct: 25, returnDays: 730, lockDays: 60,
+    slotsTotal: 15, slotsFilled: 4, status: 'active'
+  }
 ];
 
 // ═══════════════════════════════════════════════════════
@@ -754,28 +789,33 @@ window.addEventListener('load', async () => {
   state.properties = SAMPLE_PROPERTIES;
 
   // Update UI with user info
-  document.getElementById('heroName').textContent = firstName;
-  document.getElementById('memoId').textContent = (typeof memoValue!=='undefined')?memoValue:String(userId);
+  // Hero greeting — show full name
+  document.getElementById('heroName').textContent = fullName;
+
+  // Deposit memo — show @username or numeric Telegram ID
+  document.getElementById('memoId').textContent = memoValue;
+
   document.getElementById('depositWallet').textContent = CONFIG.tonWallet;
   document.getElementById('contactInfo').textContent = CONFIG.contactInfo;
 
-  // Profile
-  document.getElementById('profileName').textContent = firstName + (username ? '' : '');
-  document.getElementById('profileUsername').textContent = username ? '@' + username : 'Telegram User';
-  document.getElementById('profileAvatar').textContent = (firstName&&firstName.length)?firstName[0].toUpperCase():'I';
+  // Profile — name + username
+  document.getElementById('profileName').textContent    = fullName;
+  document.getElementById('profileUsername').textContent = username ? '@' + username : 'ID: ' + (tgUser.id || userId);
+  var avatarLetter = fullName.length > 0 ? fullName[0].toUpperCase() : 'I';
+  document.getElementById('profileAvatar').textContent  = avatarLetter;
   const joined = new Date().toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
   document.getElementById('profileJoined').textContent = joined;
 
   renderAll();
 
-  // Hide loading — safe for browser + Telegram
+  // Hide loading — safe everywhere
   setTimeout(function(){
-    var lo=document.getElementById('loading');
-    var ap=document.getElementById('app');
-    if(lo){lo.style.transition='opacity 0.4s';lo.style.opacity='0';}
-    if(ap){ap.style.display='flex';}
-    setTimeout(function(){if(lo)lo.style.display='none';},450);
-  },1200);
+    var lo = document.getElementById('loading');
+    var ap = document.getElementById('app');
+    if(lo){ lo.style.transition='opacity 0.4s'; lo.style.opacity='0'; }
+    if(ap){ ap.style.display='flex'; }
+    setTimeout(function(){ if(lo) lo.style.display='none'; }, 450);
+  }, 1200);
 });
 
 function renderAll() {
@@ -817,7 +857,7 @@ function renderProperties(filter) {
   const labels = {home:'Home', shop:'Shop / Commercial', market:'Market / Plaza', plot:'Plot / Land'};
 
   if (!filtered.length) {
-    list.innerHTML = '<div class="empty-state"><div class="empty-icon">🏗️</div><div class="empty-title">Coming Soon</div><div class="empty-text">No properties available in this category right now.</div></div>';
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">🏗️</div><div class="empty-title">Jald aa rahi hain</div><div class="empty-text">Is category mein abhi koi property nahi hai.</div></div>';
     return;
   }
 
@@ -859,8 +899,8 @@ function renderInvestments() {
   if (!state.investments.length) {
     list.innerHTML = `<div class="empty-state">
       <div class="empty-icon">📭</div>
-      <div class="empty-title">No Investments Yet</div>
-      <div class="empty-text">Browse properties and make your first investment!</div>
+      <div class="empty-title">Koi Investment Nahi</div>
+      <div class="empty-text">Properties section mein jakar apni pehli investment karein!</div>
     </div>`;
     return;
   }
@@ -970,7 +1010,7 @@ function startInvest() {
   if (!p) return;
 
   if (state.balance < p.minInv) {
-    showToast('❌ Insufficient balance. Please deposit first.');
+    showToast('❌ Balance kam hai! Pehle deposit karein.');
     return;
   }
 
@@ -1013,10 +1053,10 @@ function confirmInvest() {
   const amt = parseFloat(document.getElementById('investAmtInput').value);
 
   if (!amt || amt < p.minInv) {
-    showToast('❌ Minimum investment: ' + p.minInv + ' TON'); return;
+    showToast('❌ Min investment: ' + p.minInv + ' TON'); return;
   }
   if (amt > state.balance) {
-    showToast('❌ Not enough balance. Please deposit first!'); return;
+    showToast('❌ Balance nahi hai. Deposit karein!'); return;
   }
 
   const unlock = new Date();
@@ -1037,7 +1077,7 @@ function confirmInvest() {
   renderAll();
 
   document.getElementById('propModal').classList.remove('open');
-  showToast('✅ Investment confirmed! ' + amt.toFixed(2) + ' TON invested.');
+  showToast('✅ Investment successful! ' + amt.toFixed(2) + ' TON invested.');
 
   // Send data to bot/backend
   sendToBot({ action: 'invest', userId, propId: p.id, amount: amt, unlockAt: unlock.toISOString() });
@@ -1048,55 +1088,64 @@ function cancelInvest() {
   document.getElementById('propInfoView').style.display = 'block';
 }
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 // DEPOSIT — TON AUTO CHECK
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function copyWallet() {
-  navigator.clipboard.writeText(CONFIG.tonWallet)
-    .then(function(){ showToast('✅ TON address copied!'); });
+  navigator.clipboard.writeText(CONFIG.tonWallet).then(() => showToast('✅ Address copied!'));
 }
 function copyMemo() {
-  var m = (typeof memoValue!=='undefined') ? memoValue : String(userId);
-  navigator.clipboard.writeText(m)
-    .then(function(){ showToast('✅ Memo copied!'); });
+  navigator.clipboard.writeText(memoValue).then(function(){ showToast('✅ Memo copied!'); });
 }
 
-async function checkTonDeposit() {
-  var btn = document.getElementById('checkDepBtn');
+async function checkDeposit() {
+  const btn = document.getElementById('checkDepBtn');
   btn.textContent = '⏳ Checking...';
   btn.disabled = true;
+
   try {
-    var memo = (typeof memoValue!=='undefined') ? memoValue : String(userId);
-    var url  = 'https://toncenter.com/api/v2/getTransactions?address='
-               + CONFIG.tonWallet + '&limit=20';
-    var res  = await fetch(url, { headers: {'X-API-Key': CONFIG.tonApiKey} });
-    var data = await res.json();
+    const url = `https://toncenter.com/api/v2/getTransactions?address=${CONFIG.tonWallet}&limit=20`;
+    const res = await fetch(url, {
+      headers: { 'X-API-Key': CONFIG.tonApiKey }
+    });
+    const data = await res.json();
+
     if (!data.ok) throw new Error('API error');
-    var credited = 0;
-    for (var i = 0; i < data.result.length; i++) {
-      var tx = data.result[i];
+
+    let credited = 0;
+    const memo = (typeof memoValue !== 'undefined') ? memoValue : String(userId);
+
+    for (const tx of data.result) {
       if (!tx.in_msg || !tx.in_msg.source) continue;
-      var txId = tx.transaction_id.hash;
-      if (state.checkedTxs.indexOf(txId) !== -1) continue;
-      var comment = (tx.in_msg.message || '').trim();
-      if (comment !== memo && comment !== String(userId)) continue;
-      var amt = parseInt(tx.in_msg.value) / 1e9;
-      if (amt < CONFIG.minDeposit) continue;
-      state.balance += amt;
+      const txId = tx.transaction_id.hash;
+      if (state.checkedTxs.includes(txId)) continue;
+
+      const comment = (tx.in_msg.message || '').trim();
+      // Match @username OR numeric ID (both work)
+      if (comment !== memo && comment !== String(tgUser.id || userId)) continue;
+
+      const amountTon = parseInt(tx.in_msg.value) / 1e9;
+      if (amountTon < CONFIG.minDeposit) continue;
+
+      state.balance += amountTon;
       state.checkedTxs.push(txId);
-      credited += amt;
-      sendToBot({ action:'deposit_ton', userId:userId, amount:amt, txId:txId });
+      credited += amountTon;
+
+      sendToBot({ action: 'deposit', userId, amount: amountTon, txId });
     }
+
     saveState();
     renderAll();
+
     if (credited > 0) {
-      showToast('✅ '+credited.toFixed(4)+' TON added to your balance!');
+      showToast('✅ ' + credited.toFixed(4) + ' TON credited!');
     } else {
-      showToast('⏳ No deposit found. Make sure memo is correct.');
+      showToast('⏳ Koi naya deposit nahi mila');
     }
   } catch(e) {
-    showToast('❌ Check failed. Please try again.');
+    showToast('❌ Check failed. Dobara try karein.');
   }
+
   btn.textContent = '🔄 Check My Deposit';
   btn.disabled = false;
 }
@@ -1107,20 +1156,20 @@ async function checkTonDeposit() {
 function showWithdrawPage() {
   // Show as overlay on profile page
   if (state.balance < CONFIG.minWithdraw) {
-    showToast('❌ Minimum withdrawal: ' + CONFIG.minWithdraw + ' TON');
+    showToast('❌ Min withdrawal: ' + CONFIG.minWithdraw + ' TON');
     showPage('profile');
     return;
   }
 
   // Simple prompt using Telegram's native UI feel
-  const wallet = prompt('Enter your TON wallet address (EQ... or UQ...)');
+  const wallet = prompt('Apna TON wallet address likhein (EQ... ya UQ...)');
   if (!wallet) return;
   if (!wallet.startsWith('EQ') && !wallet.startsWith('UQ') || wallet.length < 40) {
     showToast('❌ Invalid TON wallet address');
     return;
   }
 
-  const amtStr = prompt('How much to withdraw? (Max: ' + state.balance.toFixed(2) + ' TON)');
+  const amtStr = prompt('Kitna nikalna chahte hain? (Max: ' + state.balance.toFixed(2) + ' TON)');
   const amt = parseFloat(amtStr);
   if (!amt || amt < CONFIG.minWithdraw || amt > state.balance) {
     showToast('❌ Invalid amount'); return;
@@ -1130,7 +1179,7 @@ function showWithdrawPage() {
   saveState();
   renderAll();
   sendToBot({ action: 'withdraw', userId, amount: amt, wallet });
-  showToast('✅ Withdrawal submitted! Processing within 24 hours.');
+  showToast('✅ Withdrawal request bhej di! 24 hrs mein process hogi.');
   showPage('profile');
 }
 
@@ -1140,14 +1189,14 @@ function showWithdrawPage() {
 async function sendToBot(data) {
   try {
     // Option 1: Send via Telegram WebApp
-    try{if(tg&&tg.sendData)tg.sendData(JSON.stringify(data));}catch(e){}
+    if(tg && tg.sendData) tg.sendData(JSON.stringify(data));
   } catch(e) {
     // Option 2: If backend URL configured, send there
     if (CONFIG.apiBase && CONFIG.apiBase !== 'YOUR_BACKEND_URL') {
       fetch(CONFIG.apiBase + '/webhook', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(Object.assign({},data,{initData:(tg&&tg.initData)||""}))
+        body: JSON.stringify(Object.assign({},data,{initData:(tg&&tg.initData)||''}))
       }).catch(() => {});
     }
   }
